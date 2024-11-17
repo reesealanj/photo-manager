@@ -9,6 +9,7 @@ PROD_BINARY_LINUX=$(OUTPUT_DIR)/$(BINARY_NAME)-linux-amd64
 PROD_BINARY_DARWIN=$(OUTPUT_DIR)/$(BINARY_NAME)-darwin-amd64
 PROD_BINARY_WINDOWS=$(OUTPUT_DIR)/$(BINARY_NAME)-windows-amd64.exe
 MODE ?= dev
+VERSION ?= 0.0.0
 
 # Default target
 .PHONY: all
@@ -51,6 +52,15 @@ else
 	@echo "Invalid MODE: $(MODE). Use 'dev' or 'prod'."
 	@exit 1
 endif
+
+# Build binaries for release (based on VERSION)
+.PHONY: release
+release:
+	@echo "Building release folder for version v$(VERSION)"
+	@mkdir -p $(OUTPUT_DIR)/release-$(VERSION)
+	GOOS=linux GOARCH=amd64 go build -o $(OUTPUT_DIR)/release-${VERSION}/$(BINARY_NAME)-$(VERSION)_linux-amd64 $(SRC)
+	GOOS=darwin GOARCH=amd64 go build -o $(OUTPUT_DIR)/release-${VERSION}/$(BINARY_NAME)-$(VERSION)_darwin-amd64 $(SRC)
+	GOOS=windows GOARCH=amd64 go build -o $(OUTPUT_DIR)/release-${VERSION}/$(BINARY_NAME)-$(VERSION)_windows-amd64.exe $(SRC)
 
 # Cleanup target
 .PHONY: clean
